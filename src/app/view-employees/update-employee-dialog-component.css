@@ -1,0 +1,11 @@
+.add-form {
+    display: flex;
+    flex-direction: column;
+
+    /* background-color:gray; */
+  }
+  
+  .add-form > * {
+    width: 100%;
+    
+  }

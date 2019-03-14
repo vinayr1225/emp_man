@@ -1,0 +1,20 @@
+<mat-toolbar>
+  <h1>
+    Add new skills...
+  </h1>
+</mat-toolbar>
+<div class="add-title">
+</div>
+<div>
+  <form [formGroup]="skillForm" (ngSubmit)="onSubmit()">
+      <div class="skill-form">
+          <mat-form-field appearance="outline" [color]="accent">
+              <mat-label>Skills</mat-label>
+            <input matInput type="text" formControlName="name" placeholder="Skills" required>
+          </mat-form-field>
+        </div>    
+    <div class="skill-form">
+      <button mat-raised-button color="primary" type="submit" [disabled]="false">ADD</button>
+    </div>
+  </form>
+</div>

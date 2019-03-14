@@ -1,0 +1,58 @@
+<div>
+  <div class="add-title">
+    <mat-toolbar color = "aceent"r>
+      <h1>
+        Enter details here...
+      </h1>
+    </mat-toolbar>
+  </div>
+  <div>
+    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" #empForm="ngForm">
+      <div class="add-form">
+        <mat-form-field appearance="outline" [color]="accent">
+            <mat-label>Name</mat-label>
+          <input matInput type="text" formControlName="name" placeholder="Name" required>
+        </mat-form-field>
+      </div>
+      <div class="add-form">
+        <mat-form-field appearance="outline">
+            <mat-label>E-Mail</mat-label>
+          <input matInput type="email" formControlName="email" placeholder="E-Mail" required>
+          <!-- <mat-error *ngIf="employeeForm.controls['email'].invalid">{{getErrorMessage()}}</mat-error> -->
+        </mat-form-field>
+      </div>
+      <div class="add-form">
+        <mat-form-field appearance="outline">
+            <mat-label>Date of Birth</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="birthday" placeholder="Date of Birth" required>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="add-form">
+        <mat-form-field appearance="outline">
+            <mat-label>Skills</mat-label>
+          <input matInput placeholder="Type any skills here..." #skillInput formControlName="skills"
+            [matAutocomplete]="auto" [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="add($event)">
+          <mat-chip-list #chipList [multiple]="multiple">
+            <mat-chip *ngFor="let skill of selectedSkills" [selectable]="selectable" [removable]="removable"
+              (removed)="remove(skill)">
+              {{skill.name}}
+              <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+          </mat-chip-list>
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+            <mat-option *ngFor="let skill of filteredSkills | async" [value]="skill">
+              {{skill.name}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <div class="add-form">
+        <!-- <button mat-raised-button color="Accent" (click)="clear()">CLEAR</button> -->
+        <button mat-raised-button color="primary" type="submit" [disabled]="false">ADD</button>
+      </div>
+    </form>
+  </div>
+</div>
