@@ -80,6 +80,7 @@ export class AddEmployeeComponent implements OnInit {
         let skill: Skill = new Skill();
         skill.name = value.trim();
         this.selectedSkills.push(skill);
+        
       }
       // Reset the input value
       if (input) {
@@ -91,7 +92,9 @@ export class AddEmployeeComponent implements OnInit {
 
   selected(event: MatAutocompleteSelectedEvent): void {
     let skill: Skill = event.option.value;
+    // console.log(this.skillsList.indexOf(skill));
     this.selectedSkills.push(skill);
+    this.skillsList.splice(this.skillsList.indexOf(skill),1);
     this.skillInput.nativeElement.value = '';
     this.employeeForm.controls['skills'].setValue(null);
   }
@@ -101,6 +104,7 @@ export class AddEmployeeComponent implements OnInit {
 
     if (index >= 0) {
       this.selectedSkills.splice(index, 1);
+      this.skillsList.push(skill);
     }
   }
 
@@ -121,12 +125,13 @@ export class AddEmployeeComponent implements OnInit {
     } else {
       this.employeeForm.controls['skills'].setValue(this.selectedSkills);
     }
-    console.log(this.selectedSkills);
     this.employeeServices.createEmployee(this.employeeForm.value)
       .subscribe(data => {
           console.log(data),
           this.formValues.resetForm(),
-          this.selectedSkills = new Array<Skill>()
+          this.selectedSkills = new Array<Skill>(),
+          this.reloadSkills()
+          
       }, error => {
         console.error(error)
       });

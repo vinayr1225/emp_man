@@ -19,35 +19,40 @@ export class ViewEmployeesComponent implements OnInit {
   constructor(private employeeService: EmployeeService, public dialog: MatDialog) { }
 
   employees: Observable<Employee[]>;
-  employee: Employee =  new Employee();
+  employee: Employee = new Employee();
   displayedColumns: string[] = ['name', 'email', 'birthday', 'skills', '***'];
 
   ngOnInit() {
     this.get();
   }
 
-  get(){
+  get() {
     this.employees = this.employeeService.getAllEmployees();
   }
 
-  delete(employee: Employee){
+  delete(employee: Employee) {
+    
     return this.employeeService.deleteEmployeeById(employee.id).subscribe(
-      data=> {
-        console.log("deleted" + data);
+      data => {
+        // this.employees.splice(employees.indexOf(data.),1)
+        console.log("deleted" + data);        
       },
       error => {
         console.log(error);
-      }
+      },
+      
+      
     );
-  }  
+    
+  }
 
   openUpdateDialog(employee: Employee) {
     const dialogRef = this.dialog.open(UpdateEmployeeDialogComponent, {
-      width: '1000px', 
+      width: '1000px',
       data: employee
     });
 
-    
+
 
     // dialogRef.afterClosed().subscribe(result => {
     //   console.log(result);
@@ -66,7 +71,7 @@ export class ViewEmployeesComponent implements OnInit {
     // });
   }
 
-  
+
 }
 
 @Component({
@@ -85,7 +90,7 @@ export class UpdateEmployeeDialogComponent {
 
   employeeForm = new FormGroup({
     name: new FormControl(this.data.name),
-    email: new FormControl(this.data.email,Validators.email),
+    email: new FormControl(this.data.email, Validators.email),
     birthday: new FormControl(this.data.birthday.toString()),
     skills: new FormControl("")
   });
@@ -111,12 +116,19 @@ export class UpdateEmployeeDialogComponent {
 
   reloadSkills() {
     this.skillServices.getAllSkills().subscribe(data => {
-      this.skillsList = data,
-        this.filteredSkills = this.employeeForm.controls['skills'].valueChanges.pipe(
-          startWith(null),
-          map((skillName: string | null) => skillName ? this._filter(skillName) : data),
+      this.skillsList = data;
+      data.forEach(skill => {
+        this.selectedSkills.forEach(selectedSkill => {
+          if (skill.skill_id == selectedSkill.skill_id) {
+            this.skillsList.splice(this.skillsList.indexOf(skill), 1);
+          }
+        });
+      });
+      this.filteredSkills = this.employeeForm.controls['skills'].valueChanges.pipe(
+        startWith(null),
+        map((skillName: string | null) => skillName ? this._filter(skillName) : data),
 
-        );
+      );
     });
   }
 
@@ -155,15 +167,16 @@ export class UpdateEmployeeDialogComponent {
   selected(event: MatAutocompleteSelectedEvent): void {
     let skill: Skill = event.option.value;
     this.selectedSkills.push(skill);
+    this.skillsList.splice(this.skillsList.indexOf(skill), 1);
     this.skillInput.nativeElement.value = '';
     this.employeeForm.controls['skills'].setValue(null);
   }
 
   remove(skill: Skill): void {
     const index = this.selectedSkills.indexOf(skill);
-
     if (index >= 0) {
       this.selectedSkills.splice(index, 1);
+      this.skillsList.push(skill);
     }
   }
 
@@ -189,13 +202,11 @@ export class UpdateEmployeeDialogComponent {
     this.onNoClick();
   }
 
-  update() {
-    // if no skill selected an array cannot be created 
-    if (this.employeeForm.controls['skills'].value == "") {
-      this.employeeForm.controls['skills'].setValue(new Array<Skill>());
-    } else {
-      this.employeeForm.controls['skills'].setValue(this.selectedSkills);   
-    }
+  update() {    
+      console.log(this.employeeForm.controls['skills'].value);
+      this.employeeForm.controls['skills'].setValue(this.selectedSkills);
+      console.log(this.employeeForm.controls['skills'].value);
+    // }
     this.employeeServices.updateEmployee(this.data.id, this.employeeForm.value)
       .subscribe(data => {
         console.log(data),
@@ -207,20 +218,20 @@ export class UpdateEmployeeDialogComponent {
 
   }
 
-  
-
-  
-
-  
-
-  
 
 
-  
-
-  
 
 
-  
+
+
+
+
+
+
+
+
+
+
+
 
 }
